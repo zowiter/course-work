@@ -18,6 +18,8 @@ class Node(object):
         self.row, self.column = row, column
         self.position = Vector2(column*TILEWIDTH, row*TILEHEIGHT)
         self.neighbors = {UP:None, DOWN:None, LEFT:None, RIGHT:None}
+        self.portalNode = None
+        self.portalVal = 0
         
     def render(self, screen):
         for n in self.neighbors.keys():
@@ -127,6 +129,7 @@ class NodeGroup(object):
             return Node(row, col)
         else:
             return None
+        
     def render(self, screen):
         for node in self.nodeList:
             node.render(screen)

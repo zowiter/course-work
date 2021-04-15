@@ -13,6 +13,7 @@ from pacman import Pacman
 from nodes import NodeGroup
 from vector import Vector2
 from const import *
+from ghosts import Ghost
 
 
 class GameController(object):
@@ -30,10 +31,13 @@ class GameController(object):
     def startGame(self):
         self.nodes = NodeGroup("maze.txt")
         self.pacman = Pacman(self.nodes)
+        self.ghost = Ghost(self.nodes)
+
     
     def update(self):
         dt = self.clock.tick(30) / 1000.0
         self.pacman.update(dt)
+        self.ghost.update(dt, self.pacman)
         self.checkEvents()
         self.render()
 
@@ -46,6 +50,7 @@ class GameController(object):
         self.screen.blit(self.background, (0, 0))
         self.nodes.render(self.screen)
         self.pacman.render(self.screen)
+        self.ghost.render(self.screen)
         pygame.display.update()
 
 

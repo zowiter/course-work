@@ -13,8 +13,7 @@ from pacman import Pacman
 from nodes import NodeGroup
 from vector import Vector2
 from const import *
-from ghosts import Ghost
-
+from ghosts import GhostGroup
 
 class GameController(object):
     def __init__(self):
@@ -31,26 +30,46 @@ class GameController(object):
     def startGame(self):
         self.nodes = NodeGroup("maze.txt")
         self.pacman = Pacman(self.nodes)
-        self.ghost = Ghost(self.nodes)
+        self.ghosts = GhostGroup(self.nodes)
+        self.gameover = False
 
     
     def update(self):
-        dt = self.clock.tick(30) / 1000.0
-        self.pacman.update(dt)
-        self.ghost.update(dt, self.pacman)
+        if not self.gameover:
+            dt = self.clock.tick(30) / 1000.0
+            self.pacman.update(dt)
+            self.ghosts.update(dt, self.pacman)
+            self.checkGhostEvents()
         self.checkEvents()
         self.render()
+
 
     def checkEvents(self):
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()
-                
+
+    def restartLevel(self):
+        self.pacman.reset()
+        self.ghosts = GhostGroup(self.nodes)
+
+    def checkGhostEvents(self):
+        if self.mode.name == "CHASE":
+            self.pacman.loseLife()
+
+    def resolveDeath(self):
+        if self.pacman.lives == 0:
+            self.startGame()
+        else:
+            self.restartLevel()
+
+
     def render(self):
         self.screen.blit(self.background, (0, 0))
         self.nodes.render(self.screen)
         self.pacman.render(self.screen)
-        self.ghost.render(self.screen)
+        self.ghosts.render(self.screen)
+        self.pacman.renderLives(self.screen)
         pygame.display.update()
 
 

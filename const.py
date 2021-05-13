@@ -7,9 +7,9 @@ Created on Thu Apr 15 19:40:36 2021
 
 from vector import Vector2
 
-TILEWIDTH = 16
-TILEHEIGHT = 16
-NROWS = 36
+TILEWIDTH = 18
+TILEHEIGHT = 20
+NROWS = 31
 BLACK = (0, 0, 0)
 NCOLS = 28
 SCREENWIDTH = NCOLS*TILEWIDTH
@@ -24,3 +24,6 @@ RIGHT = Vector2(1, 0)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 LEFT = Vector2(-1, 0)
+PINK = (255,100,150)
+TEAL = (100,255,255)
+ORANGE = (230,190,40)

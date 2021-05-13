@@ -49,7 +49,7 @@ class Entity(object):
             node2Self = vec2.magnitudeSquared()
             return node2Self >= node2Target
         return False
-    
+
     def reverseDirection(self):
         if self.direction is UP: self.direction = DOWN
         elif self.direction is DOWN: self.direction = UP

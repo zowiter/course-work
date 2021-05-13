@@ -21,6 +21,7 @@ class Pacman(Entity):
         self.speed = 100
         self.radius = 10
         self.color = YELLOW
+        self.lives = 5
         self.nodes = nodes
         self.node = nodes.nodeList[0]
         self.target = self.node
@@ -71,16 +72,24 @@ class Pacman(Entity):
             if self.overshotTarget():
                 self.node = self.target
                 if self.node.neighbors[direction] is not None:
-                    self.target = self.node.neighbors[direction]
-                    if self.direction != direction:
-                        self.setPosition()
-                        self.direction = direction
+                    if self.node.homeEntrance:
+                        if self.node.neighbors[self.direction] is not None:
+                            self.target = self.node.neighbors[self.direction]
+                        else:
+                            self.setPosition()
+                            self.direction = STOP
+                    else:
+                        self.target = self.node.neighbors[direction]
+                        if self.direction != direction:
+                            self.setPosition()
+                            self.direction = direction
                 else:
                     if self.node.neighbors[self.direction] is not None:
                         self.target = self.node.neighbors[self.direction]
                     else:
                         self.setPosition()
                         self.direction = STOP
+
 #проверяет, не прошел ли пакман точку, по которой должн двигаться
     def overshotTarget(self):
         if self.target is not None:
@@ -99,7 +108,16 @@ class Pacman(Entity):
         temp = self.node
         self.node = self.target
         self.target = temp
-        
+
+    def loseLife(self):
+        self.lives -= 1
+
+    def renderLives(self, screen):
+        for i in range(self.lives - 1):
+            x = 5 + self.radius + (2 * self.radius + 5) * i
+            y = TILEHEIGHT * (NROWS - 1)
+            pygame.draw.circle(screen, self.color, (x, y), self.radius)
+
     def render(self, screen):
         p = self.position.asInt()
         pygame.draw.circle(screen, self.color, p, self.radius)

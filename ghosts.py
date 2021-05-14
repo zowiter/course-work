@@ -82,6 +82,26 @@ class Ghost(Entity):
         modes.push(Mode(name="SCATTER", time=7))
         return modes
 
+    def freightMode(self):
+        if self.mode.name != "SPAWN":
+            if self.mode.name != "FREIGHT":
+                if self.mode.time is not None:
+                    dt = self.mode.time - self.modeTimer
+                    self.modeStack.push(Mode(name=self.mode.name, time=dt))
+                else:
+                    self.modeStack.push(Mode(name=self.mode.name))
+                self.mode = Mode("FREIGHT", time=7, speedMult=0.5)
+                self.modeTimer = 0
+            else:
+                self.mode = Mode("FREIGHT", time=7, speedMult=0.5)
+                self.modeTimer = 0
+            self.reverseDirection()
+
+    def randomGoal(self):
+        x = randint(0, NCOLS * TILEWIDTH)
+        y = randint(0, NROWS * TILEHEIGHT)
+        self.goal = Vector2(x, y)
+
     def scatterGoal(self):
         self.goal = Vector2(SCREENSIZE[0], 0)
 
@@ -106,6 +126,8 @@ class Ghost(Entity):
             self.chaseGoal(pacman, blinky)
         elif self.mode.name == "SCATTER":
             self.scatterGoal()
+        elif self.mode.name == "FREIGHT":
+            self.randomGoal()
         self.moveBySelf()
 
     def setStartPosition(self):

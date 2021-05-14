@@ -4,7 +4,7 @@ Created on Wed Apr 14 11:49:31 2021
 
 @author: eveli
 """
-#Создание окна, где будет все происходить :)
+#Все, что нужно для запуска игры
 
 
 import pygame
@@ -39,29 +39,39 @@ class GameController(object):
             dt = self.clock.tick(30) / 1000.0
             self.pacman.update(dt)
             self.ghosts.update(dt, self.pacman)
-            self.checkGhostEvents()
+        self.checkGhostEvents()
         self.checkEvents()
         self.render()
 
+    def checkGhostEvents(self):
+        ghost = self.pacman.eatGhost(self.ghosts)
+        if ghost is not None:
+            if ghost.mode.name == "FREIGHT":
+                ghost.spawnMode(speed=2)
+                self.pacman.visible = False
+                ghost.visible = False
+            elif ghost.mode.name == "CHASE" or ghost.mode.name == "SCATTER":
+                #self.pacman.loseLife()
+                exit()
 
     def checkEvents(self):
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    if self.gameover:
+                        self.startGame()
 
     def restartLevel(self):
         self.pacman.reset()
         self.ghosts = GhostGroup(self.nodes)
 
-    def checkGhostEvents(self):
-        if self.mode.name == "CHASE":
-            self.pacman.loseLife()
-
-    def resolveDeath(self):
-        if self.pacman.lives == 0:
-            self.startGame()
-        else:
-            self.restartLevel()
+    #def resolveDeath(self):
+        #if self.pacman.lives == 0:
+            #self.gameover = True
+        #else:
+            #self.restartLevel()
 
 
     def render(self):
@@ -69,7 +79,7 @@ class GameController(object):
         self.nodes.render(self.screen)
         self.pacman.render(self.screen)
         self.ghosts.render(self.screen)
-        self.pacman.renderLives(self.screen)
+        #self.pacman.renderLives(self.screen)
         pygame.display.update()
 
 

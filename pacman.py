@@ -20,6 +20,7 @@ class Pacman(Entity):
         self.direction = STOP
         self.speed = 100
         self.radius = 10
+        self.collideRadius = 5
         self.color = YELLOW
         #self.lives = 5
         self.nodes = nodes
@@ -30,13 +31,23 @@ class Pacman(Entity):
     def setPosition(self):
         self.position = self.node.position.copy()
 
-    def eatGhost(self, ghosts):
+
+    def touchGhost(self, ghosts):
         for ghost in ghosts:
             d = self.position - ghost.position
             dSquared = d.magnitudeSquared()
             rSquared = (self.collideRadius + ghost.collideRadius)**2
             if dSquared <= rSquared:
                 return ghost
+        return None
+
+    def eatDots(self, dotList):
+        for dot in dotList:
+            d = self.position - dot.position
+            dSquared = d.magnitudeSquared()
+            rSquared = (dot.radius + self.collideRadius) ** 2
+            if dSquared <= rSquared:
+                return dot
         return None
         
     def update(self, dt):
